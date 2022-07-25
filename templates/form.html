@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% block body_block %}
+
+<style>
+body {
+  align-items: center;
+  background-repeat:no-repeat;
+  background-size:100% 100vh;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.form {
+  border-radius: 20px;
+  box-sizing: content-box;
+  height: 630px;
+  padding: 20px;
+  width: 320px;
+  opacity: 0.9;
+}
+
+.title {
+  color: rgb(0, 0, 0);
+  font-family: sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  margin-top: 30px;
+}
+
+.subtitle {
+  color: rgb(0, 0, 0);
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.input-container {
+  height: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.ic1 {
+  margin-top: 40px;
+}
+
+.ic2 {
+  margin-top: 20px;
+}
+
+.input {
+  background-color: #f9f9fb;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: rgb(0, 0, 0);
+  font-size: 18px;
+  height: 100%;
+  outline: 0;
+  padding: 4px 20px 0;
+  width: 100%;
+}
+
+.cut {
+  background-color: #15172b;
+  border-radius: 10px;
+  height: 20px;
+  left: 20px;
+  position: absolute;
+  top: -20px;
+  transform: translateY(0);
+  transition: transform 200ms;
+  width: 76px;
+}
+
+.cut-short {
+  width: 50px;
+}
+
+.input:focus ~ .cut,
+.input:not(:placeholder-shown) ~ .cut {
+  transform: translateY(8px);
+}
+
+.placeholder {
+  color: #65657b;
+  font-family: sans-serif;
+  left: 20px;
+  line-height: 14px;
+  pointer-events: none;
+  position: absolute;
+  transform-origin: 0 50%;
+  transition: transform 200ms, color 200ms;
+  top: 20px;
+}
+
+.input:focus ~ .placeholder,
+.input:not(:placeholder-shown) ~ .placeholder {
+  transform: translateY(-30px) translateX(10px) scale(0.75);
+}
+
+.input:not(:placeholder-shown) ~ .placeholder {
+  color: #808097;
+}
+
+.input:focus ~ .placeholder {
+  color: #dc2f55;
+}
+
+.submit {
+  background-color: rgb(198, 77, 77);
+  border-radius: 8px;
+  border: 0;
+  box-sizing: border-box;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  font-size: 30px;
+  height: 50px;
+  margin-top: 38px;
+  outline: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.submit:active {
+  background-color: #06b;
+}
+label {
+  color: rgb(0, 0, 0);
+     display: flex;
+     align-items: left;
+     margin: 0 auto;
+     font-size: 18px;
+   }
+</style>
+<form  action="{% url 'form_data' %}" method="post" enctype = "multipart/form-data">
+  {% csrf_token %}
+
+<div class="form">
+  <div class="title">Welcome</div>
+  <div class="subtitle">Enter your details!</div>
+  {% include 'alerts.html' %}
+  <div class="input-container ic1">
+    <label for="u_d">Select the operation</label>
+    <select name="u_d" id="up_down" >
+      <option value="select">Select</option>
+      <option value="upload">Upload</option>
+      <option value="download">Download</option>
+    </select>
+  </div>
+  <div class="input-container ic1">
+    <label for="server">Select the Server</label>
+    <select name="server" id="server">
+      <option value="select">Select</option>
+      <option value="aws">AWS</option>
+      <option value="azure">Azure</option>
+    </select>
+  </div>
+  <div class="input-container ic2" style="display: none;" id="download_o">
+    <p> {{ form.document.errors }}
+      {{ form.document }}</p>
+  </div>
+  <div class="input-container ic2">
+    <input style="display: none;" name="con_str" id = "con_str" class="input" placeholder="Enter connection string(For Azure)" type="text"/>
+  </div>
+  <div class="input-container ic2">
+    <input style="display: none;" name="con_name" id = "con_name" class="input" placeholder="Enter container name(For Azure)" type="text"/>
+  </div>
+  <div class="input-container ic2">
+    <input style="display: none;" name="key_id" id = "key_id" class="input" placeholder="Enter Access Key ID(For AWS)" type="text"/>
+  </div>
+  <div class="input-container ic2">
+    <input  style="display: none;" name="key_secret" id = "key_secret" class="input" placeholder="Enter Access Secret Key(For AWS)" type="text"/>
+  </div>
+  <div class="input-container ic2">
+    <input style="display: none;" name="bucket_name" id = "bucket_name" class="input" placeholder="Enter Bucket Name(For AWS)" type="text"/>
+  </div>
+  <button type="text" class="submit">Submit</button>
+</div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+  $('#server').change(function() {
+    if( $("#server").val() == 'aws' ){
+         $("#con_str").hide();
+         $("#con_name").hide();
+         $("#key_id").show();
+         $("#key_secret").show();
+         $("#bucket_name").show();
+       }
+       else if($("#server").val() == 'azure'){
+         $("#con_str").show();
+         $("#con_name").show();
+         $("#key_id").hide();
+         $("#key_secret").hide();
+         $("#bucket_name").hide();
+       }
+       else{
+         $("#con_str").hide();
+         $("#con_name").hide();
+         $("#key_id").hide();
+         $("#key_secret").hide();
+         $("#bucket_name").hide();
+       }
+
+});
+
+      $('#up_down').change(function() {
+        if( $("#up_down").val() == 'upload' ){
+             $("#download_o").show();
+           }
+           else if($("#up_down").val() == 'download'){
+             $("#download_o").hide();
+           }
+           else{
+             $("#download_o").hide();
+           }
+
+      });
+</script>
+
+{% endblock %}

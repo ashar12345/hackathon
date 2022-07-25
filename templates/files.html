@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block body_block %}
+<style>
+body {
+  align-items: center;
+  background-repeat:no-repeat;
+  background-size:100% 100vh;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.form {
+  border-radius: 20px;
+  box-sizing: content-box;
+  height: 630px;
+  padding: 20px;
+  width: 320px;
+  opacity: 0.9;
+}
+
+.title {
+  color: rgb(0, 0, 0);
+  font-family: sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  margin-top: 30px;
+}
+.submit {
+  background-color: rgb(198, 77, 77);
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  font-size: 30px;
+  height: 50px;
+  margin-top: 38px;
+  outline: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.input {
+    color: rgb(0, 0, 0);
+}
+
+.label {
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+}
+</style>
+<div >
+  <h3>If download is complete,  <a href="{% url 'form_data' %}">Click here</a> to go back, or logoff on top right.</h3>
+</div>
+
+<div>
+  <form action = "{% url 'home' %}" method="post">
+    {% csrf_token %}
+      <div class="form" style="overflow:scroll; height:480px; width:900px; top:300px;">
+          <div class="title">Select the files</div>
+          {% for file in file_names %}
+          <p>
+              <input id="input_files" type="checkbox" name="choices" value={{file}}/>
+              <label class = "label" for = "input_files">{{file}}</label>
+          </p>
+          {% endfor %}
+      </div>
+      <input type="submit" class="submit" value="Submit" style="width:200px">
+  </form>
+</div>
+
+{% endblock %}
